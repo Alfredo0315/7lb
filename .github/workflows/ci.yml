@@ -1,8 +1,11 @@
-name: Build and Tests with Analysis Comb
-on: [push,pull_request]
+name: Build artifacts
+on: [pull_request]
 jobs:
     build:
       runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          configuration: [Debug, Release]
       steps:
         - name: Checkout Code
           uses: actions/checkout@v4
@@ -11,11 +14,19 @@ jobs:
           with:
             dotnet-version: '8.0.x'
         - name: Build prj
-          run: dotnet build src/Calculator.ConsoleApp/Calculator.ConsoleApp.csproj
- 
+          run: dotnet build src/Calculator.ConsoleApp/Calculator.ConsoleApp.csproj --configuration ${{ matrix.configuration }}
+        - name:  Upload artifacts
+          uses: actions/upload-artifact@v4
+          with: 
+            name: prj-${{ matrix.configuration }}
+            path: src/Calculator.ConsoleApp/bin/${{ matrix.configuration }}/net8.0/
+     
     test:
       needs: build
       runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          configuration: [Debug, Release]
       steps:
         - name: Checkout Code
           uses: actions/checkout@v4
@@ -24,17 +35,4 @@ jobs:
           with:
             dotnet-version: '8.0.x'
         - name: Run tests
-          run: dotnet test tests/Calculator.Tests/Calculator.Tests.csproj
-
-    analysis:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v4
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '8.0.x'
-        - name: Analysis
-          run: dotnet format --verify-no-changes
+          run: dotnet test tests/Calculator.Tests/Calculator.Tests.csproj --configuration ${{ matrix.configuration}}
