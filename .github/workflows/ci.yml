@@ -1,22 +1,12 @@
-name: Build and Tests
+name: Build and Tests with Debug and Release Parallel
 on: [push,pull_request]
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v4
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '8.0.x'
-        - name: Build
-          run: dotnet build src/Calculator.ConsoleApp/Calculator.ConsoleApp.csproj
- 
-    test:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+     matrix:
+      configuration: [Debug, Release]
+    steps:
         - name: Checkout Code
           uses: actions/checkout@v4
         - name: Setup .NET
@@ -24,4 +14,4 @@ jobs:
           with:
             dotnet-version: '8.0.x'
         - name: Run tests
-          run: dotnet test tests/Calculator.Tests/Calculator.Tests.csproj
+          run: dotnet test tests/Calculator.Tests/Calculator.Tests.csproj --configuration ${{ matrix.configuration }}
