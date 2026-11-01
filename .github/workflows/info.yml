@@ -15,5 +15,5 @@ jobs:
         run: echo "Студент $STUDENT"
       - name: info2
         env:
-         TOKEN: ${{ secrets.API_TOKEN }}
+         TOKEN: ${{ secrets.MY_SECRET }}
         run:  echo "TOKEN $TOKEN" 
