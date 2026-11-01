@@ -8,17 +8,12 @@ on:
 jobs:
   info:
     runs-on: ubuntu-latest
+    env: 
+      STUDENT: Кириллова
     steps:
-      - name: author
-        run: echo "Автор репозитория ${{ github.repository_owner }}"
-      - name: repository
-        run: echo "Репозиторий ${{ github.repository }}"
-      - name: event
-        run: echo "Запущен ${{ github.event_name }}"
-  
-  hello:
-    needs: info
-    runs-on: ubuntu-latest
-    steps:
-      - name: hi
-        run: echo "Привет от ${{ github.repository_owner }}"
+      - name: info
+        run: echo "Студент $STUDENT"
+      - name: info2
+        env:
+         TOKEN: ${{ secrets.API_TOKEN }}
+        run:  echo "TOKEN $TOKEN" 
